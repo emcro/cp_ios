@@ -140,11 +140,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 	/*
 	 Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 	 */
-    
-    NSTimeInterval checkInTime = [[NSDate date] timeIntervalSince1970];
-
-    [[CPCheckinHandler sharedHandler] queueLocalNotificationForAutoCheckInAnnouncement:[CPUserDefaultsHandler currentVenue] checkInTime:checkInTime];
-
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

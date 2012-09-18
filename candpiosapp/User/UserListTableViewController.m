@@ -32,7 +32,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+
     // the map is our delegate
     self.delegate = [[CPAppDelegate settingsMenuController] mapTabController];
     

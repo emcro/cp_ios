@@ -82,10 +82,7 @@ static CPCheckinHandler *sharedHandler;
     localNotif.soundName = UILocalNotificationDefaultSoundName;
     
     localNotif.fireDate = [NSDate dateWithTimeIntervalSince1970:(checkInTime + minutesAfter * 60)];
-//    localNotif.fireDate = [NSDate dateWithTimeIntervalSince1970:(checkInTime + 5)];
     localNotif.timeZone = [NSTimeZone defaultTimeZone];
-    
-    NSLog(@"***checkInTime: %d", checkInTime);
     
     // encode the venue and store it in an NSDictionary
     NSData *venueData = [NSKeyedArchiver archivedDataWithRootObject:venue];
@@ -103,7 +100,7 @@ static CPCheckinHandler *sharedHandler;
     NSDictionary *venueDataDict;
     
     // Cancel all old local notifications
-//    [[UIApplication sharedApplication] cancelAllLocalNotifications];
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
     
     localNotif.alertBody = @"You will be checked out of C&P in 5 min.";
     localNotif.alertAction = @"Check Out";
@@ -137,7 +134,7 @@ static CPCheckinHandler *sharedHandler;
 
 - (void)saveCheckInVenue:(CPVenue *)venue andCheckOutTime:(NSInteger)checkOutTime
 {
-//    [[UIApplication sharedApplication] cancelAllLocalNotifications];
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
     [self setCheckedOut];
     [CPUserDefaultsHandler setCheckoutTime:checkOutTime];
     [CPUserDefaultsHandler setCurrentVenue:venue];

@@ -31,6 +31,24 @@ static AFHTTPClient *sharedClient;
     return self;
 }
 
++ (void)announceCheckInToVenue:(CPVenue *)venue
+       completionBlock:(void (^)(NSDictionary *, NSError *))completion
+{
+    NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
+
+    [parameters setValue:[NSNumber numberWithInteger:venue.venueID] forKey:@"venue_id"];
+    [parameters setValue:@"announceCheckIn" forKey:@"action"];
+    
+    [sharedClient postPath:@"api.php" parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        completion(responseObject, nil);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        completion(nil, error);
+    }];
+    
+    [FlurryAnalytics logEvent:@"announcedCheckIn"];
+
+}
+
 + (void)checkInToVenue:(CPVenue *)venue
                 hoursHere:(int)hoursHere
                statusText:(NSString *)statusText
@@ -59,7 +77,14 @@ static AFHTTPClient *sharedClient;
         [parameters setValue:@"1" forKey:@"is_virtual"];
     } else {
         [parameters setValue:@"0" forKey:@"is_virtual"];
-        
+    }
+    
+    // If this wasn't an automatic CheckIn, push a notification out to everyone immediately
+    if (isAutomatic) {
+        [parameters setValue:@"0" forKey:@"announce_immediately"];
+    }
+    else {
+        [parameters setValue:@"1" forKey:@"announce_immediately"];
     }
     
     [parameters setValue:@"checkin" forKey:@"action"];

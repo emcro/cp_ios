@@ -22,6 +22,7 @@ typedef enum {
 
 - (void)presentCheckinModalFromViewController:(UIViewController *)presentingViewController;
 - (void)handleSuccessfulCheckinToVenue:(CPVenue *)venue checkoutTime:(NSInteger)checkoutTime;
+- (void)queueLocalNotificationForAutoCheckInAnnouncement:(CPVenue *)venue checkInTime:(NSInteger)checkInTime;
 - (void)queueLocalNotificationForVenue:(CPVenue *)venue checkoutTime:(NSInteger)checkoutTime;
 - (void)setCheckedOut;
 - (void)saveCheckInVenue:(CPVenue *)venue andCheckOutTime:(NSInteger)checkOutTime;

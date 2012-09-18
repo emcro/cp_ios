@@ -140,6 +140,11 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 	/*
 	 Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 	 */
+    
+    NSTimeInterval checkInTime = [[NSDate date] timeIntervalSince1970];
+
+    [[CPCheckinHandler sharedHandler] queueLocalNotificationForAutoCheckInAnnouncement:[CPUserDefaultsHandler currentVenue] checkInTime:checkInTime];
+
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
@@ -255,7 +260,22 @@ didReceiveLocalNotification:(UILocalNotification *)notif
     NSString *cancelText;
     NSString *otherText;
 
-    if ([notif.alertAction isEqualToString:@"Check Out"]) {
+    if ([notif.alertAction isEqualToString:@"Announce"]) {
+        // User has opened the app from the Announce alert, so push the passed checkin information (if still current) to everyone
+        // Afterwards, take them right to the Venue view so they can see who's also there
+
+        NSData *venueData = [notif.userInfo objectForKey:@"venue"];
+        CPVenue *venue = [NSKeyedUnarchiver unarchiveObjectWithData:venueData];
+        
+        if ([CPUserDefaultsHandler isUserCurrentlyCheckedIn] && [[CPUserDefaultsHandler currentVenue].name isEqualToString:venue.name]) {            
+            [CPApiClient announceCheckInToVenue:venue completionBlock:^(NSDictionary *json, NSError *error) {
+                if (!error) {
+//                    [CPAppDelegate loadVenueView:venue.name];
+                }
+            }];
+        }
+    }
+    else if ([notif.alertAction isEqualToString:@"Check Out"]) {
         // For regular timeout checkouts
         alertText = kCheckOutLocalNotificationAlertViewTitle;
         cancelText = @"Ignore";

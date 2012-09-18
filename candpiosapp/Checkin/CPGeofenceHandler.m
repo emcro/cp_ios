@@ -93,6 +93,9 @@ static CPGeofenceHandler *sharedHandler;
                 
                 // update this venue in the list of past venues
                 [self updatePastVenue:venue];
+                
+                // Post a local notification after X minutes (to help ignore drivebys and other geofencing-breaking anomalies) if the user is still checked in
+                [[CPCheckinHandler sharedHandler] queueLocalNotificationForAutoCheckInAnnouncement:venue checkInTime:checkInTime];
             }
             else {
                 // There was an error checking in; probably safe to ignore

@@ -65,6 +65,36 @@ static CPCheckinHandler *sharedHandler;
     }
 }
 
+- (void)queueLocalNotificationForAutoCheckInAnnouncement:(CPVenue *)venue checkInTime:(NSInteger)checkInTime
+{
+    // Fire a notification 5 minutes after user was auto-checked in by geofence trigger, which when activated, will trigger the push to other users
+    NSInteger minutesAfter = 5;
+    UILocalNotification *localNotif = [[UILocalNotification alloc] init];
+    NSDictionary *venueDataDict;
+    
+    // Cancel all old local notifications
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
+    
+    NSString *alertString = [NSString stringWithFormat:@"You've been automatically checked in to %@. Announce your arrival?", venue.name];
+    
+    localNotif.alertBody = alertString;
+    localNotif.alertAction = @"Announce";
+    localNotif.soundName = UILocalNotificationDefaultSoundName;
+    
+    localNotif.fireDate = [NSDate dateWithTimeIntervalSince1970:(checkInTime + minutesAfter * 60)];
+//    localNotif.fireDate = [NSDate dateWithTimeIntervalSince1970:(checkInTime + 5)];
+    localNotif.timeZone = [NSTimeZone defaultTimeZone];
+    
+    NSLog(@"***checkInTime: %d", checkInTime);
+    
+    // encode the venue and store it in an NSDictionary
+    NSData *venueData = [NSKeyedArchiver archivedDataWithRootObject:venue];
+    venueDataDict = [NSDictionary dictionaryWithObject:venueData forKey:@"venue"];
+    
+    localNotif.userInfo = venueDataDict;
+    [[UIApplication sharedApplication] scheduleLocalNotification:localNotif];
+}
+
 - (void)queueLocalNotificationForVenue:(CPVenue *)venue checkoutTime:(NSInteger)checkoutTime
 {
     // Fire a notification 5 minutes before checkout time
@@ -73,7 +103,7 @@ static CPCheckinHandler *sharedHandler;
     NSDictionary *venueDataDict;
     
     // Cancel all old local notifications
-    [[UIApplication sharedApplication] cancelAllLocalNotifications];
+//    [[UIApplication sharedApplication] cancelAllLocalNotifications];
     
     localNotif.alertBody = @"You will be checked out of C&P in 5 min.";
     localNotif.alertAction = @"Check Out";
@@ -107,7 +137,7 @@ static CPCheckinHandler *sharedHandler;
 
 - (void)saveCheckInVenue:(CPVenue *)venue andCheckOutTime:(NSInteger)checkOutTime
 {
-    [[UIApplication sharedApplication] cancelAllLocalNotifications];
+//    [[UIApplication sharedApplication] cancelAllLocalNotifications];
     [self setCheckedOut];
     [CPUserDefaultsHandler setCheckoutTime:checkOutTime];
     [CPUserDefaultsHandler setCurrentVenue:venue];

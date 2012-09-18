@@ -10,6 +10,9 @@
 
 @interface CPApiClient : AFHTTPClient
 
++ (void)announceCheckInToVenue:(CPVenue *)venue
+               completionBlock:(void (^)(NSDictionary *, NSError *))completion;
+
 + (void)checkInToVenue:(CPVenue *)venue
                 hoursHere:(int)hoursHere
                statusText:(NSString *)statusText
